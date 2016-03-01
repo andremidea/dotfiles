@@ -18,6 +18,11 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
+import XMonad.Actions.SpawnOn
+import XMonad.Actions.CycleWS
+import XMonad.Actions.PhysicalScreens
+import XMonad.Layout.Circle
+import XMonad.Actions.UpdatePointer
 
 
 ------------------------------------------------------------------------
@@ -28,7 +33,7 @@ import qualified Data.Map        as M
 myTerminal = "termite"
 
 -- The command to lock the screen or show the screensaver.
-myScreensaver = "/usr/bin/gnome-screensaver-command --lock"
+myScreensaver = "xscreensaver-command -lock"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
@@ -45,7 +50,7 @@ myLauncher = "$(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso88
 -- Workspaces
 -- The default number of workspaces (virtual screens) and their names.
 --
-myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
+myWorkspaces = ["1:emacs","2:web","3:term","4:vm","5:media"] ++ map show [6..9]
 
 
 ------------------------------------------------------------------------
@@ -64,7 +69,9 @@ myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
 --
 myManageHook = composeAll
     [ className =? "Chromium"       --> doShift "2:web"
-    , className =? "Google-chrome"  --> doShift "2:web"
+    , className =? "Firefox"        --> doShift "2:web"
+    , className =? "Termite"        --> doShift "3:term"
+    , className =? "Emacs"          --> doShift "1:emacs"
     , resource  =? "desktop_window" --> doIgnore
     , className =? "Galculator"     --> doFloat
     , className =? "Steam"          --> doFloat
@@ -89,7 +96,8 @@ myManageHook = composeAll
 --
 myLayout = avoidStruts (
     Tall 1 (3/100) (1/2) |||
-    Full 
+    Full
+    )
 
 
 ------------------------------------------------------------------------
@@ -133,7 +141,6 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   ----------------------------------------------------------------------
   -- Custom key bindings
   --
-
   -- Start a terminal.  Terminal to start is specified by myTerminal variable.
   [ ((modMask .|. shiftMask, xK_Return),
      spawn $ XMonad.terminal conf)
@@ -284,7 +291,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 -- Focus rules
 -- True if your focus should follow your mouse cursor.
 myFocusFollowsMouse :: Bool
-myFocusFollowsMouse = True
+myFocusFollowsMouse = False
 
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
   [
@@ -331,12 +338,13 @@ myStartupHook = return ()
 main = do
   xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
   xmonad $ defaults {
-      logHook = dynamicLogWithPP $ xmobarPP {
+      logHook = dynamicLogWithPP xmobarPP {
             ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor xmobarTitleColor "" . shorten 100
           , ppCurrent = xmobarColor xmobarCurrentWorkspaceColor ""
           , ppSep = "   "
       }
+      >> updatePointer (0.5, 0.5) (0, 0)
       , manageHook = manageDocks <+> myManageHook
       , startupHook = setWMName "LG3D"
   }

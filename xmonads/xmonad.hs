@@ -68,7 +68,7 @@ myWorkspaces = ["1:emacs","2:web","3:term","4:vm","5:media"] ++ map show [6..9]
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ className =? "Chromium"       --> doShift "2:web"
+    [ className =? "chromium-browser"--> doShift "2:web"
     , className =? "Firefox"        --> doShift "2:web"
     , className =? "Termite"        --> doShift "3:term"
     , className =? "Emacs"          --> doShift "1:emacs"

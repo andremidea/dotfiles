@@ -69,15 +69,11 @@ myWorkspaces = ["1:emacs","2:web","3:term","4:slack","5:media"] ++ map show [6..
 --
 myManageHook = composeAll
     [ className =? "chromium-browser"--> doShift "2:web"
+    , className =? "google-chrome"  --> doShift "2:web"
     , className =? "Firefox"        --> doShift "2:web"
     , className =? "Termite"        --> doShift "3:term"
     , className =? "Emacs"          --> doShift "1:emacs"
     , resource  =? "desktop_window" --> doIgnore
-    , className =? "Galculator"     --> doFloat
-    , className =? "Steam"          --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "gpicview"       --> doFloat
-    , className =? "MPlayer"        --> doFloat
     , className =? "Slack"          --> doShift "4:slack"
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
@@ -164,25 +160,43 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. controlMask, xK_m),
      spawn "amixer -q set Master toggle")
 
+  -- Mute volume.
+  , ((0, 0x1008ff12),
+     spawn "amixer -q set Master toggle")
+
   -- Decrease volume.
   , ((modMask .|. controlMask, xK_j),
+     spawn "amixer -q set Master 10%-")
+
+  , ((0, 0x1008ff11),
      spawn "amixer -q set Master 10%-")
 
   -- Increase volume.
   , ((modMask .|. controlMask, xK_k),
      spawn "amixer -q set Master 10%+")
 
+  , ((0, 0x1008ff13),
+     spawn "amixer -q set Master 10%+")
+
+  -- Increase Bright
+  , ((modMask .|. controlMask, xK_b),
+     spawn "xbacklight -inc 10")
+
+  -- Decrease Bright
+  , ((modMask, xK_b),
+     spawn "xbacklight -dec 10")
+
   -- Audio previous.
-  , ((0, 0x1008FF16),
-     spawn "")
+  , ((0, 0xffc2),
+     spawn "playerctl previous")
 
   -- Play/pause.
-  , ((0, 0x1008FF14),
-     spawn "")
+  , ((0, 0xffc3),
+     spawn "playerctl play-pause")
 
   -- Audio next.
-  , ((0, 0x1008FF17),
-     spawn "")
+  , ((0, 0xffc4),
+     spawn "playerctl next")
 
   -- Eject CD tray.
   , ((0, 0x1008FF2C),

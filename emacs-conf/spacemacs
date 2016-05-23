@@ -33,6 +33,13 @@ values."
              python-test-runner 'pytest)
      yaml
      dockerfile
+     themes-megapack
+     (scala :variables
+            scala-enable-eldoc-mode t
+            scala-auto-insert-asterisk-in-comments t)
+     haskell
+     ruby-on-rails
+     org
      ;; markdown
      ;; org
      ;; (shell :variables
@@ -46,7 +53,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(slim-mode)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -102,10 +109,8 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-dark
-                         spacemacs-light
                          solarized-light
                          solarized-dark
-                         leuven
                          monokai
                          zenburn)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
@@ -254,6 +259,15 @@ layers configuration. You are free to put any user code."
   (pythonic-activate "/home/andremidea/nu_home/python-envs/env")
   (setq pytest-global-name "/home/andremidea/nu_home/python-envs/env/bin/py.test")
   (setq exec-path (append exec-path '("/home/andremidea/nu_home/python-envs/env/bin")))
+  (setq ensime-sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
+  (setq sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
+  (setq sbt:program-name "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
+  (setq flycheck-scalastyle-jar "/home/andremidea/nu_home/scala-envs/scalastyle_2.11-0.6.0.jar")
+  (add-to-list 'auto-mode-alist '("\\.aurora\\'" . python-mode))
+  (add-to-list 'auto-mode-alist '("\\.factotum\\'" . js-mode))
+  (add-to-list 'auto-mode-alist '("\\.slim\\'" . slim-mode))
+
+  (setq ort/prefix-arg-directory "/home/andremidea/Dropbox/org")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -263,7 +277,21 @@ layers configuration. You are free to put any user code."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(safe-local-variable-values))
+ '(org-capture-templates
+   (quote
+    (("ort/checkitem" "Org Repo Checklist Item" checkitem
+      (file+headline
+       (ort/todo-file)
+       "Checklist"))
+     ("ort/todo" "Org Repo Todo" entry
+      (file+headline
+       (ort/todo-file)
+       "Todos")
+      "* TODO  %?			%T
+ %i
+ Link: %l
+"))))
+ '(safe-local-variable-values nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

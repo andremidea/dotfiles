@@ -34,6 +34,7 @@ values."
      yaml
      dockerfile
      themes-megapack
+     markdown
      (scala :variables
             scala-enable-eldoc-mode t
             scala-auto-insert-asterisk-in-comments t)
@@ -268,6 +269,8 @@ layers configuration. You are free to put any user code."
   (add-to-list 'auto-mode-alist '("\\.slim\\'" . slim-mode))
 
   (setq ort/prefix-arg-directory "/home/andremidea/Dropbox/org")
+  (global-set-key (kbd "C-S-n") 'new-frame)
+  (require 'nu "/home/andremidea/nu_home/nudev/ides/emacs/nu.el")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

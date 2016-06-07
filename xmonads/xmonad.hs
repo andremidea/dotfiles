@@ -37,9 +37,9 @@ myScreensaver = "xscreensaver-command -lock"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
-mySelectScreenshot = "select-screenshot"
+mySelectScreenshot = "sleep 0.2; scrot -s '/home/andremidea/Screenshots/%Y-%m-%d_%s.png'"
 
-myScreenshot = "screenshot"
+myScreenshot = "scrot '/home/andremidea/Screenshots/%Y-%m-%d_%s.png'"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
@@ -166,17 +166,17 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
   -- Decrease volume.
   , ((modMask .|. controlMask, xK_j),
-     spawn "amixer -q set Master 10%-")
+     spawn "amixer -q set Master 5%-")
 
   , ((0, 0x1008ff11),
-     spawn "amixer -q set Master 10%-")
+     spawn "amixer -q set Master 5%-")
 
   -- Increase volume.
   , ((modMask .|. controlMask, xK_k),
-     spawn "amixer -q set Master 10%+")
+     spawn "amixer -q set Master 5%+")
 
   , ((0, 0x1008ff13),
-     spawn "amixer -q set Master 10%+")
+     spawn "amixer -q set Master 5%+")
 
   -- Increase Bright
   , ((modMask .|. controlMask, xK_b),

@@ -257,20 +257,20 @@ in `dotspacemacs/user-config'."
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
   (global-company-mode)
-  (pythonic-activate "/home/andremidea/nu_home/python-envs/env")
-  (setq pytest-global-name "/home/andremidea/nu_home/python-envs/env/bin/py.test")
-  (setq exec-path (append exec-path '("/home/andremidea/nu_home/python-envs/env/bin")))
-  (setq ensime-sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
-  (setq sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
-  (setq sbt:program-name "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
-  (setq flycheck-scalastyle-jar "/home/andremidea/nu_home/scala-envs/scalastyle_2.11-0.6.0.jar")
+  ;; (pythonic-activate "/home/andremidea/nu_home/python-envs/env")
+ ;; (setq pytest-global-name "/home/andremidea/nu_home/python-envs/env/bin/py.test")
+ ;; (setq exec-path (append exec-path '("/home/andremidea/nu_home/python-envs/env/bin")))
+ ;; (setq ensime-sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
+ ;; (setq sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
+ ;; (setq sbt:program-name "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
+ ;; (setq flycheck-scalastyle-jar "/home/andremidea/nu_home/scala-envs/scalastyle_2.11-0.6.0.jar")
   (add-to-list 'auto-mode-alist '("\\.aurora\\'" . python-mode))
   (add-to-list 'auto-mode-alist '("\\.factotum\\'" . js-mode))
   (add-to-list 'auto-mode-alist '("\\.slim\\'" . slim-mode))
 
   (setq ort/prefix-arg-directory "/home/andremidea/Dropbox/org")
   (global-set-key (kbd "C-S-n") 'new-frame)
-  (require 'nu "/home/andremidea/nu_home/nudev/ides/emacs/nu.el")
+  ;;(require 'nu "/home/andremidea/nu_home/nudev/ides/emacs/nu.el")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

@@ -14,6 +14,7 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.Spiral
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.GridVariants
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
 import qualified XMonad.StackSet as W
@@ -68,13 +69,13 @@ myWorkspaces = ["1:emacs","2:web","3:term","4:slack","5:media"] ++ map show [6..
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ className =? "chromium-browser"--> doShift "2:web"
-    , className =? "google-chrome"  --> doShift "2:web"
-    , className =? "Firefox"        --> doShift "2:web"
-    , className =? "Termite"        --> doShift "3:term"
-    , className =? "Emacs"          --> doShift "1:emacs"
-    , resource  =? "desktop_window" --> doIgnore
-    , className =? "Slack"          --> doShift "4:slack"
+    [-- className =? "chromium-browser"--> doShift "2:web"
+    --, className =? "google-chrome"  --> doShift "2:web"
+   -- , className =? "Firefox"        --> doShift "2:web"
+   -- , className =? "Termite"        --> doShift "3:term"
+   -- , className =? "Emacs"          --> doShift "1:emacs"
+   -- , resource  =? "desktop_window" --> doIgnore
+     className =? "Slack"          --> doShift "4:slack"
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
 
@@ -90,6 +91,7 @@ myManageHook = composeAll
 --
 myLayout = avoidStruts (
     Tall 1 (3/100) (1/2) |||
+    Grid (16/10)  |||
     Full
     )
 

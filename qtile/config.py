@@ -26,7 +26,9 @@
 
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
-from libqtile import layout, bar, widget
+from libqtile import layout, bar, widget, hook
+import os
+import subprocess
 
 mod = "mod4"
 
@@ -40,6 +42,7 @@ keys = [
         lazy.layout.toggle_split()
     ),
     Key([mod, "shift"], "Return", lazy.spawn("termite")),
+    Key([mod, "control"], "l", lazy.spawn("gnome-screensaver-command -l")),
 
     # Toggle between different layouts as defined below
     Key([mod], "space", lazy.next_layout()),
@@ -65,6 +68,9 @@ keys = [
     Key([mod], "n", lazy.layout.normalize()),
     Key([mod], "o", lazy.layout.maximize()),
     Key([mod, "shift"], "space", lazy.layout.flip()),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("amixer -q set Master 5%+")),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("amixer -q set Master 5%-")),
+    Key([], "XF86AudioMute", lazy.spawn("amixer -q set Master toggle"))
 ]
 
 groups = [Group("%s" % i) for i in range(1,9)]
@@ -96,6 +102,51 @@ widget_defaults = dict(
     padding=3,
 )
 
+
+#   Screens Config
+# ------------------
+flat_theme = {"bg_dark": ["#606060", "#000000"],
+              "bg_light": ["#707070", "#303030"],
+              "font_color": ["#ffffff", "#cacaca"],
+
+              # groupbox
+              "gb_selected": ["#7BA1BA", "#215578"],
+              "gb_urgent": ["#ff0000", "#820202"]
+              }
+
+gloss_theme = {"bg_dark": ["#505050",
+                           "#303030",
+                           "#202020",
+                           "#101010",
+                           "#202020",
+                           "#303030",
+                           "#505050"],
+               "bg_light": ["#707070",
+                            "#505050",
+                            "#505050",
+                            "#505050",
+                            "#505050",
+                            "#707070"],
+               "font_color": ["#ffffff", "#ffffff", "#cacaca", "#707070"],
+
+               # groupbox
+               "gb_selected": ["#707070",
+                               "#505050",
+                               "#404040",
+                               "#303030",
+                               "#404040",
+                               "#505050",
+                               "#707070"],
+               "gb_urgent": ["#ff0000",
+                             "#820202",
+                             "#820202",
+                             "#820202",
+                             "#820202",
+                             "#ff0000"
+                             ]
+               }
+theme = gloss_theme
+
 screens = [Screen(top = bar.Bar([
         # This is a list of our virtual desktops.
         widget.GroupBox(urgent_alert_method='text', fontsize=11, this_current_screen_border='7b5830'),
@@ -110,6 +161,39 @@ screens = [Screen(top = bar.Bar([
         widget.CurrentLayout(foreground='7b5830'),
         widget.sep.Sep(foreground='7b5830'),
         #NetworkStatus(theme_path='/home/deewakar/.config/qtile/icons/'),
+    # system usage
+    widget.CPUGraph(core=0, width=21, line_width=2,
+                    graph_color='#0066FF',
+                    fill_color=['#0066FF', '#001111'],
+                    margin_x=0, border_width=1,
+                    background=theme["bg_dark"],
+                    ),
+    widget.CPUGraph(core=1, width=21, line_width=2,
+                    graph_color='#0066FF',
+                    fill_color=['#0066FF', '#001111'],
+                    margin_x=0, border_width=1,
+                    background=theme["bg_dark"],
+                    ),
+    widget.MemoryGraph(width=42, line_width=2,
+                       graph_color='#22BB44',
+                       fill_color=['#11FF11', "#002200"],
+                       border_width=1,
+                       background=theme["bg_dark"],
+                       ),
+    widget.SwapGraph(width=42, line_width=2,
+                     graph_color='#CC2020',
+                     fill_color=['#FF1010', '#221010'],
+                     border_width=1,
+                     background=theme["bg_dark"],
+                     ),
+ widget.Battery(energy_now_file = "charge_now",
+                                energy_full_file = "charge_full",
+                                power_now_file = "current_now",
+                                update_delay = 5,
+                                foreground = "7070ff",
+                                charge_char = u'↑',
+                                discharge_char = u'↓',),
+
         widget.Volume(),
         widget.sep.Sep(foreground='7b5830'),
         widget.Systray(),
@@ -163,3 +247,9 @@ focus_on_window_activation = "smart"
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
+
+
+@hook.subscribe.startup_once
+def autostart():
+    home = os.path.expanduser('~/.config/qtile/autostart.sh')
+    subprocess.call([home])

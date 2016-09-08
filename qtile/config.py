@@ -80,7 +80,15 @@ keys = [
     Key([mod, "shift"], "e" , lazy.window.togroup('idea'))
 ]
 
-groups = [Group("%s" % i) for i in range(1,9)]
+groups = [Group("1", matches=[Match(wm_class=["Emacs"])]),
+          Group("2", matches=[Match(wm_class=["google-chrome"])]),
+          Group("3", matches=[Match(wm_class=["Termite"])]),
+          Group("4", matches=[Match(wm_class=["Spotify", "Slack"])]),
+          Group("5"),
+          Group("6"),
+          Group("7"),
+          Group("8"),
+          Group("9"),]
 
 for i in groups:
     # mod1 + letter of group = switch to group
@@ -93,7 +101,7 @@ for i in groups:
         Key([mod, "shift"], i.name, lazy.window.togroup(i.name))
     )
 
-idea = Group('idea', init=False, persist=False, layout='max',
+idea = Group('idea', init=True, persist=True, layout='max',
                          matches=[Match(wm_class=['jetbrains-idea-ce'])],
                          position=9, exclusive=True)
 
@@ -262,16 +270,19 @@ def run(cmdline):
     subprocess.Popen(shlex.split(cmdline))
 
 
-@hook.subscribe.startup
-def startup():
-    runone("google-chrome-stable")
-    runone("termite")
-    runone("idea.sh")
-    runone("emacs")
+
+@hook.subscribe.screen_change
+def restart_on_randr(qtile, ev):
+    qtile.cmd_restart()
 
 
 @hook.subscribe.startup_once
 def autostart():
     home = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([home])
-    lazy.restart()
+
+    runone("google-chrome-stable")
+    runone("termite")
+    runone("idea.sh")
+    runone("emacs")
+    runone("spotify")

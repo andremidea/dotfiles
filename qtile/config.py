@@ -24,11 +24,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile.config import Key, Screen, Group, Drag, Click, Match
+from libqtile.config import Key, Screen, Group, Drag, Click, Match, Rule
 from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
 import os
 import subprocess
+import shlex
 
 mod = "mod4"
 
@@ -38,7 +39,7 @@ keys = [
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
     Key(
-        [mod, "shift"], "Return",
+        [mod], "Return",
         lazy.layout.toggle_split()
     ),
     Key([mod, "shift"], "Return", lazy.spawn("termite")),
@@ -55,6 +56,8 @@ keys = [
     Key([mod], "r", lazy.to_screen(1)),
     Key([mod], "e", lazy.to_screen(2)),
 
+    Key([mod], "Tab", lazy.layout.next()),
+    Key([mod, "shift"], "Tab", lazy.layout.client_to_next()),
     Key([mod], "h", lazy.layout.left()),
     Key([mod], "l", lazy.layout.right()),
     Key([mod], "j", lazy.layout.down()),
@@ -70,7 +73,11 @@ keys = [
     Key([mod, "shift"], "space", lazy.layout.flip()),
     Key([], "XF86AudioRaiseVolume", lazy.spawn("amixer -q set Master 5%+")),
     Key([], "XF86AudioLowerVolume", lazy.spawn("amixer -q set Master 5%-")),
-    Key([], "XF86AudioMute", lazy.spawn("amixer -q set Master toggle"))
+    Key([], "XF86AudioMute", lazy.spawn("amixer -q set Master toggle")),
+    Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause")),
+    Key([], "XF86AudioPrev", lazy.spawn("playerctl previous")),
+    Key([], "XF86AudioNext", lazy.spawn("playerctl next")),
+    Key([mod, "shift"], "e" , lazy.window.togroup('idea'))
 ]
 
 groups = [Group("%s" % i) for i in range(1,9)]
@@ -86,14 +93,24 @@ for i in groups:
         Key([mod, "shift"], i.name, lazy.window.togroup(i.name))
     )
 
+idea = Group('idea', init=False, persist=False, layout='max',
+                         matches=[Match(wm_class=['jetbrains-idea-ce'])],
+                         position=9, exclusive=True)
+
+
+keys.append(
+    Key([mod, "shift"], "e", lazy.group[idea.name].toscreen())
+)
+
 groups = groups + [Group('steam', init=False, persist=False, layout='max',
                          matches=[Match(wm_class=['Steam'])],
-                         position=9, exclusive=True,
-          )]
+                         position=9, exclusive=True), idea]
+
+dgroups_app_rules = [Rule(Match(wm_class=['Steam']), float=True, intrusive=True)]
 
 layouts = [
     layout.Max(),
-    layout.MonadTall()
+    layout.Stack()
 ]
 
 widget_defaults = dict(
@@ -154,7 +171,7 @@ screens = [Screen(top = bar.Bar([
 
         # A prompt for spawning processes or switching groups. This will be
         # invisible most of the time.
-        widget.Prompt(fontsize=10),
+        widget.Prompt(fontsize=15),
         widget.Clipboard(timeout=10),
         # Current window name.
         widget.windowtabs.WindowTabs(),
@@ -203,22 +220,6 @@ screens = [Screen(top = bar.Bar([
 ]
 
 
-#screens = [
-#    Screen(
-#        bottom=bar.Bar(
-#            [
-#                widget.GroupBox(),
-#                widget.Prompt(),
-#                widget.WindowName(),
-#                widget.TextBox("default config", name="default"),
-#                widget.Systray(),
-#                widget.Clock(format='%Y-%m-%d %a %I:%M %p'),
-#            ],
-#            30,
-#        ),
-#    ),
-#]
-
 # Drag floating layouts.
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(),
@@ -248,8 +249,29 @@ focus_on_window_activation = "smart"
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
 
+def runone(cmdline):
+    """Check if another instance of an app is running, otherwise start a new one."""
+    cmd = shlex.split(cmdline)
+    try:
+        subprocess.check_call(['pgrep', cmd[0]])
+    except:
+        run(cmdline)
+
+
+def run(cmdline):
+    subprocess.Popen(shlex.split(cmdline))
+
+
+@hook.subscribe.startup
+def startup():
+    runone("google-chrome-stable")
+    runone("termite")
+    runone("idea.sh")
+    runone("emacs")
+
 
 @hook.subscribe.startup_once
 def autostart():
     home = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([home])
+    lazy.restart()

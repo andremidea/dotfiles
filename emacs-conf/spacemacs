@@ -32,15 +32,18 @@ values."
      (python :variables
              python-test-runner 'pytest)
      yaml
-     dockerfile
+     ;;dockerfile
      themes-megapack
      markdown
      (scala :variables
             scala-enable-eldoc-mode t
+            scala-enable-eldoc t
+            scala-auto-start-ensime t
             scala-auto-insert-asterisk-in-comments t)
      haskell
      ruby-on-rails
      org
+     shell-scripts
      ;; markdown
      ;; org
      ;; (shell :variables
@@ -54,7 +57,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(slim-mode)
+   dotspacemacs-additional-packages '(slim-mode popup-imenu)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -270,7 +273,15 @@ layers configuration. You are free to put any user code."
 
   (setq ort/prefix-arg-directory "/home/andremidea/Dropbox/org")
   (global-set-key (kbd "C-S-n") 'new-frame)
-  ;;(require 'nu "/home/andremidea/nu_home/nudev/ides/emacs/nu.el")
+  (setq browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "google-chrome-stable")
+
+  (setq flycheck-scalastyle-jar
+        "/usr/local/Cellar/scalastyle/0.8.0/libexec/scalastyle_2.11-0.8.0-batch.jar")
+  (setq flycheck-scalastylerc
+        "/home/andre/scalastyle_config.xml")
+
+  (spacemacs/set-leader-keys-for-major-mode 'scala-mode "io" 'popup-imenu)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

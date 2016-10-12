@@ -44,6 +44,7 @@ keys = [
     ),
     Key([mod, "shift"], "Return", lazy.spawn("termite")),
     Key([mod, "control"], "l", lazy.spawn("gnome-screensaver-command -l")),
+    Key([mod, "control"], "p", lazy.spawn("scrot -s")),
 
     # Toggle between different layouts as defined below
     Key([mod], "space", lazy.next_layout()),
@@ -53,8 +54,8 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown()),
     Key([mod], "p", lazy.spawncmd()),
     Key([mod], "w", lazy.to_screen(0)),
-    Key([mod], "r", lazy.to_screen(1)),
-    Key([mod], "e", lazy.to_screen(2)),
+    Key([mod], "e", lazy.to_screen(1)),
+    Key([mod], "r", lazy.to_screen(2)),
 
     Key([mod], "Tab", lazy.layout.next()),
     Key([mod, "shift"], "Tab", lazy.layout.client_to_next()),
@@ -80,10 +81,10 @@ keys = [
     Key([mod, "shift"], "e" , lazy.window.togroup('idea'))
 ]
 
-groups = [Group("1", matches=[Match(wm_class=["Emacs"])]),
-          Group("2", matches=[Match(wm_class=["google-chrome"])]),
-          Group("3", matches=[Match(wm_class=["Termite"])]),
-          Group("4", matches=[Match(wm_class=["Spotify", "Slack"])]),
+groups = [Group("1", matches=[Match(wm_class=["Emacs"])], spawn=["emacs"]),
+          Group("2", matches=[Match(wm_class=["google-chrome"])], spawn=["google-chrome-stable"]),
+          Group("3", matches=[Match(wm_class=["Termite"])], spawn=["termite"]),
+          Group("4", matches=[Match(wm_class=["Spotify", "Slack"])], spawn=["spotify", "slack"]),
           Group("5"),
           Group("6"),
           Group("7"),
@@ -280,9 +281,3 @@ def restart_on_randr(qtile, ev):
 def autostart():
     home = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([home])
-
-    runone("google-chrome-stable")
-    runone("termite")
-    runone("idea.sh")
-    runone("emacs")
-    runone("spotify")

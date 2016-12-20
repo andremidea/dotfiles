@@ -18,6 +18,9 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     html
+     csv
+     javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -34,7 +37,7 @@ values."
      yaml
      ;;dockerfile
      themes-megapack
-     markdown
+     (markdown :variables markdown-live-preview-engine 'vmd)
      (scala :variables
             scala-enable-eldoc-mode t
             scala-enable-eldoc t
@@ -44,11 +47,14 @@ values."
      ruby-on-rails
      org
      shell-scripts
+     ipython-notebook
      ;; markdown
-     ;; org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
+     org
+     (shell :variables
+             shell-default-shell 'ansi-term
+             shell-default-term-shell "/bin/zsh"
+             shell-default-height 30
+             shell-default-position 'bottom)
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
@@ -221,7 +227,7 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers 'relative
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -260,13 +266,7 @@ in `dotspacemacs/user-config'."
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
   (global-company-mode)
-  ;; (pythonic-activate "/home/andremidea/nu_home/python-envs/env")
- ;; (setq pytest-global-name "/home/andremidea/nu_home/python-envs/env/bin/py.test")
- ;; (setq exec-path (append exec-path '("/home/andremidea/nu_home/python-envs/env/bin")))
- ;; (setq ensime-sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
- ;; (setq sbt-command "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
- ;; (setq sbt:program-name "/nix/store/nxlypdmky2wkl4gzww76z127cj3di2gw-sbt-0.13.9/bin/sbt")
- ;; (setq flycheck-scalastyle-jar "/home/andremidea/nu_home/scala-envs/scalastyle_2.11-0.6.0.jar")
+  (setq-default evil-escape-key-sequence "jl")
   (add-to-list 'auto-mode-alist '("\\.aurora\\'" . python-mode))
   (add-to-list 'auto-mode-alist '("\\.factotum\\'" . js-mode))
   (add-to-list 'auto-mode-alist '("\\.slim\\'" . slim-mode))
@@ -282,7 +282,17 @@ layers configuration. You are free to put any user code."
         "/home/andre/scalastyle_config.xml")
 
   (spacemacs/set-leader-keys-for-major-mode 'scala-mode "io" 'popup-imenu)
-  )
+
+  (copy-face font-lock-constant-face 'calendar-iso-week-face)
+  (set-face-attribute 'calendar-iso-week-face nil
+                      :height 0.7)
+  (setq calendar-intermonth-text
+        '(propertize
+          (format "%2d"
+                  (car
+                   (calendar-iso-from-absolute
+                    (calendar-absolute-from-gregorian (list month day year)))))
+          'font-lock-face 'calendar-iso-week-face)))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -291,6 +301,7 @@ layers configuration. You are free to put any user code."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(line-number-mode t)
  '(org-capture-templates
    (quote
     (("ort/checkitem" "Org Repo Checklist Item" checkitem
@@ -313,3 +324,40 @@ layers configuration. You are free to put any user code."
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(line-number-mode t)
+ '(org-capture-templates
+   (quote
+    (("ort/checkitem" "Org Repo Checklist Item" checkitem
+      (file+headline
+       (ort/todo-file)
+       "Checklist"))
+     ("ort/todo" "Org Repo Todo" entry
+      (file+headline
+       (ort/todo-file)
+       "Todos")
+      "* TODO  %?			%T
+ %i
+ Link: %l
+"))))
+ '(package-selected-packages
+   (quote
+    (org zenburn-theme which-key use-package tao-theme smeargle persp-mode org-plus-contrib neotree monokai-theme markdown-toc live-py-mode link-hint intero flycheck inkpot-theme info+ helm-projectile evil-mc ensime ein dumb-jump darktooth-theme company-statistics clues-theme clj-refactor cider clojure-mode bind-key ample-theme alect-themes smartparens highlight helm helm-core magit magit-popup git-commit projectile inf-ruby js2-mode spacemacs-theme zonokai-theme zen-and-art-theme yapfify yaml-mode xterm-color ws-butler with-editor window-numbering websocket web-mode web-beautify volatile-highlights vmd-mode vi-tilde-fringe uuidgen underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spaceline spacegray-theme sourcerer-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme slim-mode shell-pop seti-theme scss-mode scala-mode sbt-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reverse-theme restart-emacs rbenv rainbow-delimiters railscasts-theme queue quelpa pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode projectile-rails professional-theme popwin popup-imenu planet-theme pkg-info pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme paredit paradox orgit organic-green-theme org-projectile org-present org-pomodoro org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noflet noctilux-theme niflheim-theme naquadah-theme mwim mustang-theme multi-term move-text monochrome-theme molokai-theme moe-theme mmm-mode minitest minimal-theme material-theme markdown-mode majapahit-theme magit-gitflow magit-gh-pulls macrostep lush-theme lorem-ipsum livid-mode linum-relative light-soap-theme less-css-mode json-mode js2-refactor js-doc jbeans-theme jazz-theme ir-black-theme insert-shebang indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-purpose helm-mode-manager helm-make helm-hoogle helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme haskell-snippets gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist gh-md gandalf-theme flatui-theme flatland-theme fish-mode firebelly-theme fill-column-indicator feature-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu espresso-theme eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav edn dracula-theme django-theme diminish define-word darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-tern company-shell company-ghci company-ghc company-cabal company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode cmm-mode clojure-snippets clean-aindent-mode cl-generic cider-eval-sexp-fu chruby cherry-blossom-theme busybee-theme bundler bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(safe-local-variable-values (quote ((encoding . utf-8)))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+)

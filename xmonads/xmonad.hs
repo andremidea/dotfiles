@@ -31,20 +31,20 @@ import XMonad.Actions.UpdatePointer
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal = "termite"
+myTerminal = "xfce4-terminal"
 
 -- The command to lock the screen or show the screensaver.
-myScreensaver = "xscreensaver-command -lock"
+myScreensaver = "xflock4"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
-mySelectScreenshot = "sleep 0.2; scrot -s '/home/andremidea/Screenshots/%Y-%m-%d_%s.png'"
+mySelectScreenshot = "xfce4-screenshooter -cr"
 
-myScreenshot = "scrot '/home/andremidea/Screenshots/%Y-%m-%d_%s.png'"
+myScreenshot = "xfce4-screenshooter -f --save '/home/andre/Screenshots/'"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
-myLauncher = "$(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')"
+myLauncher = "xfrun4"
 
 
 ------------------------------------------------------------------------
@@ -350,8 +350,8 @@ myStartupHook = return ()
 -- Run xmonad with all the defaults we set up.
 --
 main = do
-  xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
-  xmonad $ defaults {
+  xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmonad/xmobar.hs"
+  xmonad defaults {
       logHook = dynamicLogWithPP xmobarPP {
             ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor xmobarTitleColor "" . shorten 100

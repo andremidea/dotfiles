@@ -24,6 +24,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# -*- coding: utf-8 -*-
+
 from libqtile.config import Key, Screen, Group, Drag, Click, Match, Rule
 from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
@@ -217,8 +219,8 @@ screens = [Screen(top = bar.Bar([
                                 power_now_file = "current_now",
                                 update_delay = 5,
                                 foreground = "7070ff",
-                                charge_char = u'↑',
-                                discharge_char = u'↓',),
+                                charge_char = u'^',
+                                discharge_char = u'\/',),
 
         widget.Volume(),
         widget.sep.Sep(foreground='7b5830'),

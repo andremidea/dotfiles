@@ -154,7 +154,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. shiftMask, xK_p),
      spawn mySelectScreenshot)
 
-  -- Take a full screenshot using the command specified by myScreenshot.
+  -- Take a full screenshot using the command specified by mycsScreenshot.
   , ((modMask .|. controlMask .|. shiftMask, xK_p),
      spawn myScreenshot)
 
@@ -295,7 +295,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
   -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
   [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
-      | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+      | (key, sc) <- zip [xK_r, xK_e, xK_w] [0..]
       , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
 
@@ -350,8 +350,12 @@ myStartupHook = return ()
 -- Run xmonad with all the defaults we set up.
 --
 main = do
-  xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmonad/xmobar.hs"
+  xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmonad/xmobar.hs -x 2"
   xmonad defaults {
+      handleEventHook = mconcat
+                          [ docksEventHook
+                          , handleEventHook defaultConfig ],
+
       logHook = dynamicLogWithPP xmobarPP {
             ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor xmobarTitleColor "" . shorten 100
@@ -361,7 +365,7 @@ main = do
       >> updatePointer (0.5, 0.5) (0, 0)
       , manageHook = manageDocks <+> myManageHook
       , startupHook = setWMName "LG3D"
-  }
+ }
 
 
 ------------------------------------------------------------------------

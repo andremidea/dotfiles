@@ -9,14 +9,14 @@ Config {
   , alpha = 255
    , bgColor =      "black"
    , fgColor =      "#646464"
-   , position =     Top
+   , position =     Top C 100
    , border =       BottomB
    , borderColor =  "#646464"
 
    -- layout
    , sepChar =  "%"   -- delineator between plugin names and straight text
    , alignSep = "}{"  -- separator between left-right alignment
-   , template = "%battery% | %multicpu% | %coretemp% | %memory% | %dynnetwork% | %StdinReader% }{ %RJTT% | %date% || %kbd% "
+   , template = "%battery% | %multicpu% | %memory% | %StdinReader% }{ %RJTT% | %date% || %kbd% "
 
    -- general behavior
    , lowerOnStart =     True    -- send to bottom of window stack on start

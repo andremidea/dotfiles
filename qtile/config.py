@@ -35,6 +35,9 @@ import shlex
 
 mod = "mod4"
 
+class command:
+    lock = os.path.join(os.path.dirname(__file__), 'bin/lock')
+
 keys = [
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
@@ -44,9 +47,10 @@ keys = [
         [mod], "Return",
         lazy.layout.toggle_split()
     ),
-    Key([mod, "shift"], "Return", lazy.spawn("termite")),
-    Key([mod, "control"], "l", lazy.spawn("gnome-screensaver-command -l")),
-    Key([mod, "control"], "p", lazy.spawn("scrot -s")),
+    Key([mod, "shift"], "Return", lazy.spawn("xfce4-terminal")),
+    Key([mod, "control"], "Return", lazy.spawn("/home/andre/workspace/utility/bin/texpander")),
+    Key([mod, "control"], "l", lazy.spawn(command.lock)),
+    Key([mod, "control"], "p", lazy.spawn("xfce4-screenshooter -r -s /home/andre/Screenshots/")),
 
     # Toggle between different layouts as defined below
     Key([mod], "space", lazy.next_layout()),
@@ -56,8 +60,8 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown()),
     Key([mod], "p", lazy.spawncmd()),
     Key([mod], "w", lazy.to_screen(0)),
-    Key([mod], "e", lazy.to_screen(1)),
-    Key([mod], "r", lazy.to_screen(2)),
+    Key([mod], "e", lazy.to_screen(2)),
+    Key([mod], "r", lazy.to_screen(1)),
 
     Key([mod], "Tab", lazy.layout.next()),
     Key([mod, "shift"], "Tab", lazy.layout.client_to_next()),
@@ -80,12 +84,14 @@ keys = [
     Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause")),
     Key([], "XF86AudioPrev", lazy.spawn("playerctl previous")),
     Key([], "XF86AudioNext", lazy.spawn("playerctl next")),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("xbacklight -inc 10")),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("xbacklight -dec 10")),
     Key([mod, "shift"], "e" , lazy.window.togroup('idea'))
 ]
 
-groups = [Group("1", matches=[Match(wm_class=["Emacs"])], spawn=["emacs"]),
+groups = [Group("1", matches=[Match(wm_class=["Emacs"])]),
           Group("2", matches=[Match(wm_class=["google-chrome"])], spawn=["google-chrome-stable"]),
-          Group("3", matches=[Match(wm_class=["Termite"])], spawn=["termite"]),
+          Group("3"),
           Group("4", matches=[Match(wm_class=["Spotify", "Slack"])], spawn=["spotify", "slack"]),
           Group("5"),
           Group("6"),
@@ -117,11 +123,12 @@ groups = groups + [Group('steam', init=False, persist=False, layout='max',
                          matches=[Match(wm_class=['Steam'])],
                          position=9, exclusive=True), idea]
 
-dgroups_app_rules = [Rule(Match(wm_class=['Steam']), float=True, intrusive=True)]
+dgroups_app_rules = [Rule(Match(wm_class=['Steam']), float=True, intrusive=True), Rule(Match(wm_class=['wine'], title=["wine", "blizzard", "heroes", "battle"]), float=True, intrusive=True)]
 
 layouts = [
     layout.Max(),
-    layout.Stack()
+    layout.Stack(num_stacks=1, border_width=3, border_focus="#C70039"),
+    layout.Stack(border_width=3)
 ]
 
 widget_defaults = dict(
@@ -276,6 +283,12 @@ def run(cmdline):
 
 @hook.subscribe.screen_change
 def restart_on_randr(qtile, ev):
+    lazy.spawn(["autorandr", "--change"])
+    subprocess.call(["autorandr","--change"])
+    subprocess.call(["setxkbmap", "-option", "terminate:ctrl_alt_bksp"])
+    subprocess.call(["setxkbmap", "-option", "ctrl:nocaps"])
+    subprocess.call(["setxkbmap", "-option", "altwin:swap_lalt_win"])
+
     qtile.cmd_restart()
 
 

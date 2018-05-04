@@ -43,12 +43,8 @@ keys = [
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
-    Key(
-        [mod], "Return",
-        lazy.layout.toggle_split()
-    ),
+    Key([mod], "Return", lazy.layout.toggle_split()),
     Key([mod, "shift"], "Return", lazy.spawn("xfce4-terminal")),
-    Key([mod, "control"], "Return", lazy.spawn("/home/andre/workspace/utility/bin/texpander")),
     Key([mod, "control"], "l", lazy.spawn(command.lock)),
     Key([mod, "control"], "p", lazy.spawn("xfce4-screenshooter -r -s /home/andre/Screenshots/")),
 
@@ -90,9 +86,9 @@ keys = [
 ]
 
 groups = [Group("1", matches=[Match(wm_class=["Emacs"])]),
-          Group("2", matches=[Match(wm_class=["google-chrome"])], spawn=["google-chrome-stable"]),
+          Group("2", matches=[Match(wm_class=["google-chrome", "Firefox"])]),
           Group("3"),
-          Group("4", matches=[Match(wm_class=["Spotify", "Slack"])], spawn=["spotify", "slack"]),
+          Group("4", matches=[Match(wm_class=["Spotify", "Slack"])]),
           Group("5"),
           Group("6"),
           Group("7"),
@@ -110,7 +106,7 @@ for i in groups:
         Key([mod, "shift"], i.name, lazy.window.togroup(i.name))
     )
 
-idea = Group('idea', init=True, persist=True, layout='max',
+idea = Group('idea', init=True, persist=True,
                          matches=[Match(wm_class=['jetbrains-idea-ce'])],
                          position=9, exclusive=True)
 
@@ -119,16 +115,9 @@ keys.append(
     Key([mod, "shift"], "e", lazy.group[idea.name].toscreen())
 )
 
-groups = groups + [Group('steam', init=False, persist=False, layout='max',
-                         matches=[Match(wm_class=['Steam'])],
-                         position=9, exclusive=True), idea]
-
-dgroups_app_rules = [Rule(Match(wm_class=['Steam']), float=True, intrusive=True), Rule(Match(wm_class=['wine'], title=["wine", "blizzard", "heroes", "battle"]), float=True, intrusive=True)]
-
 layouts = [
     layout.Max(),
-    layout.Stack(num_stacks=1, border_width=3, border_focus="#C70039"),
-    layout.Stack(border_width=3)
+    layout.Stack(border_width=3, columns=2, border_focus="#C70039")
 ]
 
 widget_defaults = dict(
@@ -142,8 +131,6 @@ widget_defaults = dict(
 # ------------------
 flat_theme = {"bg_dark": ["#606060", "#000000"],
               "bg_light": ["#707070", "#303030"],
-              "font_color": ["#ffffff", "#cacaca"],
-
               # groupbox
               "gb_selected": ["#7BA1BA", "#215578"],
               "gb_urgent": ["#ff0000", "#820202"]
@@ -285,11 +272,28 @@ def run(cmdline):
 def restart_on_randr(qtile, ev):
     lazy.spawn(["autorandr", "--change"])
     subprocess.call(["autorandr","--change"])
+    subprocess.call(["setxkbmap", "us", "-variant", "colemak"])
     subprocess.call(["setxkbmap", "-option", "terminate:ctrl_alt_bksp"])
     subprocess.call(["setxkbmap", "-option", "ctrl:nocaps"])
     subprocess.call(["setxkbmap", "-option", "altwin:swap_lalt_win"])
 
     qtile.cmd_restart()
+
+
+@hook.subscribe.startup_complete
+def startup_complete(qtile, ev):
+    subprocess.call(["setxkbmap", "us", "-variant", "colemak"])
+    subprocess.call(["setxkbmap", "-option", "terminate:ctrl_alt_bksp"])
+    subprocess.call(["setxkbmap", "-option", "ctrl:nocaps"])
+    subprocess.call(["setxkbmap", "-option", "altwin:swap_lalt_win"])
+
+
+@hook.subscribe.client_mouse_enter
+def mouse_enter(qtile, ev):
+    subprocess.call(["setxkbmap", "us", "-variant", "colemak"])
+    subprocess.call(["setxkbmap", "-option", "terminate:ctrl_alt_bksp"])
+    subprocess.call(["setxkbmap", "-option", "ctrl:nocaps"])
+    subprocess.call(["setxkbmap", "-option", "altwin:swap_lalt_win"])
 
 
 @hook.subscribe.startup_once

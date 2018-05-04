@@ -12,4 +12,6 @@ xbacklight -set 40%
 
 autorandr --change
 xfce4-power-manager --restart
-
+firefox &
+spotify &
+emacs &
